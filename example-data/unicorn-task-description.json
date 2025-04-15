@@ -1,0 +1,7 @@
+{
+  "task_name": "Task01_classifying_he_prostate_biopsies_into_isup_scores",
+  "task_description": "Classify HE-stained prostate biopsies into one of the International Society of Urological Pathology (ISUP) grade groups.",
+  "domain": "pathology",
+  "modality": "vision",
+  "task_type": "classification"
+}

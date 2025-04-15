@@ -1,0 +1,33 @@
+[
+    {
+        "meta": {
+            "spacing": [0.5, 0.5, 1],
+            "patch-size": [224, 224, 3]
+        },
+        "patches": [
+            {
+                "features": [
+                    0.345,
+                    0.234
+                ],
+                "coordinates": [
+                    1,
+                    2,
+                    3
+                ]
+            },
+            {
+                "features": [
+                    0.234,
+                    0.623
+                ],
+                "coordinates": [
+                    1,
+                    2,
+                    3
+                ]
+            }
+        ],
+        "title": "generic-medical-image"
+    }
+]
