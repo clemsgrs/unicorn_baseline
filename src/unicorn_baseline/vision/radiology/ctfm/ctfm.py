@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 
-def load_model(model_path : str = "project-lighter/whole_body_segmentation"):
+def load_model(model_path):
     # Load pre-trained model
     return SegResNet.from_pretrained(
         model_path
@@ -15,8 +15,7 @@ def load_model(model_path : str = "project-lighter/whole_body_segmentation"):
 
 def load_data(data): 
     train_transforms = Compose([ 
-        EnsureType(),                        
-        Orientation(axcodes="SPL"),       
+        EnsureType(),                         
         ScaleIntensityRange(
             a_min=-1024,    
             a_max=2048,    
