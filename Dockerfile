@@ -52,6 +52,7 @@ WORKDIR /opt/app/
 # You can add any Python dependencies to requirements.in/requirements.txt
 RUN python -m pip install --upgrade pip setuptools pip-tools \
     && rm -rf /home/user/.cache/pip
+
 COPY --chown=user:user requirements.in /opt/app/
 RUN python -m pip install \
     --user \
