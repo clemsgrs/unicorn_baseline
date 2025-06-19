@@ -19,6 +19,19 @@ fi
 mkdir -p model
 
 # SmallDINOv2
+mkdir -p model/SmallDINOv2
+echo "Downloading small Dinov2 model using timm from Hugging Face..."
+
+python3 - <<EOF
+import timm
+import torch
+model = timm.create_model('vit_small_patch14_dinov2.lvd142m', pretrained=True)
+torch.save(model.state_dict(), 'model/SmallDINOv2/model.safetensors')
+
+EOF
+echo "✅ Done."
+echo ""
+
 
 # biogpt
 mkdir -p model/biogpt
