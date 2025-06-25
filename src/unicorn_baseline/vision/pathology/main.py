@@ -12,7 +12,7 @@ from PIL import Image
 
 from unicorn_baseline.io import resolve_image_path, write_json_file
 from unicorn_baseline.vision.pathology.feature_extraction import extract_features
-from unicorn_baseline.vision.pathology.models import PRISM, Virchow
+from unicorn_baseline.vision.pathology.models import TITAN
 from unicorn_baseline.vision.pathology.wsi import (
     TilingParams,
     FilterParams,
@@ -379,7 +379,6 @@ def run_pathology_vision_task(
 
     spacing = 0.5
     tolerance = 0.07 # tolerance to consider two spacings equal (e.g. if tolerance is 0.10, any spacing between [0.45, 0.55] is considered equal to 0.5)
-    tile_size = 224
     max_number_of_tiles = 30000 # limit number of tiles to comply with time limits and GPU memory
 
     num_workers = min(mp.cpu_count(), 8)
@@ -391,20 +390,20 @@ def run_pathology_vision_task(
         "tiling_params": TilingParams(
             spacing=spacing,
             tolerance=tolerance,
-            tile_size=tile_size,
+            tile_size=512,
             overlap=0.0,
             drop_holes=False,
             min_tissue_ratio=0.25,
             use_padding=True,
         ),
-        "filter_params": FilterParams(ref_tile_size=tile_size, a_t=4, a_h=2, max_n_holes=8),
+        "filter_params": FilterParams(ref_tile_size=256, a_t=4, a_h=2, max_n_holes=8),
     }
 
     detection_config = {
         "tiling_params": TilingParams(
             spacing=spacing,
             tolerance=tolerance,
-            tile_size=tile_size,
+            tile_size=224,
             overlap=0.0,
             drop_holes=False,
             min_tissue_ratio=0.1,
@@ -413,11 +412,23 @@ def run_pathology_vision_task(
         "filter_params": FilterParams(ref_tile_size=64, a_t=1, a_h=1, max_n_holes=8),
     }
 
+    # change resolution for Task 8 which looks at mitoses
+    # update tile size to avoid CONCH resizing to 448
+    if task_name == 'Task08_detecting_mitotic_figures_in_breast_cancer_wsis':
+        detection_config = {
+            "tiling_params": TilingParams(spacing=0.25, tolerance=0.07, tile_size=448, overlap=0, drop_holes=False, min_tissue_ratio=0.1, use_padding=True),
+            "filter_params": FilterParams(ref_tile_size=64, a_t=1, a_h=1, max_n_holes=8),
+        }
+
+    # our segmentation inputs start at 0.5 spacing
+    # so we cannot extract 448 tiles at 0.25 spacing
+    # we use 224 tiles instead, as the ROIs are quite small
+    # and using 448 at 0.5 would result in too few tiles
     segmentation_config = {
         "tiling_params": TilingParams(
             spacing=spacing,
             tolerance=tolerance,
-            tile_size=tile_size,
+            tile_size=224,
             overlap=0.0,
             drop_holes=False,
             min_tissue_ratio=0.1,
@@ -464,10 +475,7 @@ def run_pathology_vision_task(
 
     print("=+=" * 10)
 
-    if task_type in ["classification", "regression"]:
-        feature_extractor = PRISM(model_dir)
-    elif task_type in ["detection", "segmentation"]:
-        feature_extractor = Virchow(model_dir, mode="class_token")
+    feature_extractor = TITAN(model_dir)
 
     # Extract tile or slide features
     feature = extract_features(
