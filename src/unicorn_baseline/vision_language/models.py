@@ -11,7 +11,7 @@ class PRISM(nn.Module):
     Slide-level feature extractor (PRISM model).
     """
 
-    def __init__(self, model_dir, input_size=224):
+    def __init__(self, model_dir):
         super().__init__()
         self.model_dir = model_dir
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

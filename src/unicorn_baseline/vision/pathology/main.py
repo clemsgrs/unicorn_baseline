@@ -12,7 +12,7 @@ from PIL import Image
 
 from unicorn_baseline.io import resolve_image_path, write_json_file
 from unicorn_baseline.vision.pathology.feature_extraction import extract_features
-from unicorn_baseline.vision.pathology.models import PRISM, Virchow
+from unicorn_baseline.vision.pathology.models import ProvGigaPath
 from unicorn_baseline.vision.pathology.wsi import (
     TilingParams,
     FilterParams,
@@ -464,21 +464,20 @@ def run_pathology_vision_task(
 
     print("=+=" * 10)
 
-    if task_type in ["classification", "regression"]:
-        feature_extractor = PRISM(model_dir)
-    elif task_type in ["detection", "segmentation"]:
-        feature_extractor = Virchow(model_dir, mode="class_token")
+    feature_extractor = ProvGigaPath(model_dir)
 
     # Extract tile or slide features
     feature = extract_features(
         wsi_path=wsi_path,
         model=feature_extractor,
+        spacing=spacing,
         coordinates_dir=coordinates_dir,
         task_type=task_type,
         backend="asap",
         batch_size=batch_size,
         num_workers=num_workers,
         use_mixed_precision=use_mixed_precision,
+        scale_coordinates=True,
     )
 
     if task_type in ["classification", "regression"]:

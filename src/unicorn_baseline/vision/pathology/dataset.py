@@ -7,17 +7,26 @@ from PIL import Image
 
 
 class TileDataset(torch.utils.data.Dataset):
-    def __init__(self, wsi_path, coordinates_dir, backend, transforms=None):
+    def __init__(self, wsi_path, spacing, coordinates_dir, backend, transforms=None, scale_coordinates=False):
         self.path = wsi_path
         self.backend = backend
         self.name = wsi_path.stem.replace(" ", "_")
+        self.spacing = spacing
         self.load_coordinates(coordinates_dir)
         self.transforms = transforms
+        self.scale_coordinates_flag = scale_coordinates
 
     def set_coordinates(self, coordinates):
         self.coordinates = (np.array([coordinates["x"], coordinates["y"]]).T).astype(
             int
         )
+
+    def scale_coordinates(self, coordinates):
+        wsi = wsd.WholeSlideImage(self.path, backend=self.backend)
+        min_spacing = wsi.spacings[0]
+        scale = min_spacing / self.spacing
+        scaled_coordinates = (coordinates * scale).astype(int)
+        return scaled_coordinates
 
     def load_coordinates(self, coordinates_dir):
         coordinates_file = coordinates_dir / f"{self.name}.npy"
@@ -29,6 +38,9 @@ class TileDataset(torch.utils.data.Dataset):
         self.resize_factor = coordinates["resize_factor"]
         self.tile_size_lv0 = coordinates["tile_size_lv0"][0]
         self.set_coordinates(coordinates)
+        if self.scale_coordinates_flag:
+            self.scaled_coordinates = self.scale_coordinates(self.coordinates)
+
 
     def __len__(self):
         return len(self.coordinates)
