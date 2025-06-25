@@ -46,6 +46,12 @@ RUN apt-get update && curl -L ${ASAP_URL} -o /tmp/ASAP.deb && apt-get install --
 RUN curl -fsSL https://ollama.com/install.sh | sh
 ENV OLLAMA_MODELS=/opt/ml/model/phi4
 
+# clone prov-gigapath repo
+RUN git clone https://github.com/prov-gigapath/prov-gigapath.git
+
+# add gigapath folder to python path
+ENV PYTHONPATH="/home/user/prov-gigapath:$PYTHONPATH"
+
 # Switch to user
 USER user
 WORKDIR /opt/app/
