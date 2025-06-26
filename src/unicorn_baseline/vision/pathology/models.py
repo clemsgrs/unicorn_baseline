@@ -11,8 +11,6 @@ from timm.data.transforms_factory import create_transform
 from timm.layers import SwiGLUPacked
 
 from unicorn_baseline.vision.pathology.model_utils import update_state_dict
-from unicorn_baseline.vision.pathology.titan.configuration_titan import TitanConfig
-from unicorn_baseline.vision.pathology.titan.modeling_titan import Titan
 
 
 class SlideFeatureExtractor(nn.Module):
@@ -74,8 +72,9 @@ class ProvGigaPathTile(nn.Module):
 
     def build_encoder(self):
         encoder = timm.create_model(
-            "hf_hub:prov-gigapath/prov-gigapath",
+            "vit_giant_patch14_dinov2",
             pretrained=False,
+            **self.config["model_args"]
         )
         return encoder
 
@@ -107,6 +106,7 @@ class ProvGigaPath(SlideFeatureExtractor):
 
     def build_encoders(self):
         # needed to avoid timm error when creating slide encoder model
+        # might need to manually add the libary to the pythonpath here with sys
         import gigapath.slide_encoder as sd
 
         self.tile_encoder = ProvGigaPathTile(model_dir=self.model_dir)
