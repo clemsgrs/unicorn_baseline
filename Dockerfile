@@ -1,7 +1,8 @@
 ARG UBUNTU_VERSION=22.04
 ARG CUDA_MAJOR_VERSION=11.8.0
 ARG CUDNN_MAJOR_VERSION=8
-FROM nvidia/cuda:${CUDA_MAJOR_VERSION}-cudnn${CUDNN_MAJOR_VERSION}-runtime-ubuntu${UBUNTU_VERSION} AS base
+
+FROM nvidia/cuda:${CUDA_MAJOR_VERSION}-cudnn${CUDNN_MAJOR_VERSION}-devel-ubuntu${UBUNTU_VERSION} AS base
 
 ARG USER_UID=1001
 ARG USER_GID=1001
@@ -26,6 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     curl \
     wget \
+    git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -67,6 +69,9 @@ RUN python -m pip install \
     --no-color \
     --requirement /opt/app/requirements.in \
     && rm -rf /home/user/.cache/pip
+
+# install flash-attn separately
+RUN python -m pip install --extra-index-url https://download.pytorch.org/whl/cu118 flash-attn
 
 # Cache tiktoken
 ENV TIKTOKEN_CACHE_DIR=/opt/tiktoken_cache
