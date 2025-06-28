@@ -50,9 +50,9 @@ def aggregate_slide_features(
     """Aggregates tile-level features into a slide-level embedding."""
     tile_features = tile_features.to(device)
     if dataset.scale_coordinates_flag:
-        coordinates = torch.tensor(dataset.scaled_coordinates, dtype=torch.int64, device=device)
+        coordinates = torch.tensor(dataset.scaled_coordinates, dtype=torch.int32, device=device)
     else:
-        coordinates = torch.tensor(dataset.coordinates, dtype=torch.int64, device=device)
+        coordinates = torch.tensor(dataset.coordinates, dtype=torch.int32, device=device)
     autocast_context = nullcontext()
     if use_mixed_precision:
         autocast_context = torch.autocast(device_type="cuda", dtype=torch.float16)
