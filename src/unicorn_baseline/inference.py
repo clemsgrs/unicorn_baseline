@@ -37,9 +37,7 @@ torchvision.disable_beta_transforms_warning()
 from pathlib import Path
 
 from unicorn_baseline.io import load_inputs, load_task_description
-from unicorn_baseline.language.main import run_language
 from unicorn_baseline.vision.main import run_vision
-from unicorn_baseline.vision_language.main import run_vision_language_task
 
 INPUT_PATH = Path("/input")
 OUTPUT_PATH = Path("/output")
@@ -79,7 +77,6 @@ def run_vision_and_visionlanguage(input_dir: Path, model_dir: Path) -> int:
     # retrieve task details
     domain = task_description["domain"]
     modality = task_description["modality"]
-    task_type = task_description["task_type"]
 
     if modality == "vision":
         run_vision(
@@ -88,9 +85,8 @@ def run_vision_and_visionlanguage(input_dir: Path, model_dir: Path) -> int:
             model_dir=model_dir,
         )
     elif modality == "vision-language":
-        run_vision_language_task(
-            input_information=input_information,
-            model_dir=model_dir,
+        raise NotImplementedError(
+            "Vision-language tasks are not implemented yet."
         )
     else:
         raise ValueError(
@@ -111,7 +107,9 @@ def run():
 
     # check if the task is image or text
     if (INPUT_PATH / "nlp-task-configuration.json").exists():
-        return run_language(OUTPUT_PATH)
+        raise NotImplementedError(
+            "NLP tasks are not implemented yet."
+        )
     else:
         return run_vision_and_visionlanguage(INPUT_PATH, MODEL_PATH)
 

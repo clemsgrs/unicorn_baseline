@@ -17,7 +17,6 @@ from pathlib import Path
 from typing import Any
 
 from unicorn_baseline.vision.pathology.main import run_pathology_vision_task
-from unicorn_baseline.vision.radiology.main import run_radiology_vision_task
 
 
 def run_vision(
@@ -39,13 +38,6 @@ def run_vision(
             task_type=task_type,
             input_information=input_information,
             model_dir=model_dir,
-        )
-    elif (domain == "CT") | (domain == "MR"):
-        run_radiology_vision_task(
-            task_type=task_type,
-            input_information=input_information,
-            model_dir=model_dir,
-            domain=domain,
         )
     else:
         raise ValueError(f"Domain '{domain}' not supported yet for vision tasks.")

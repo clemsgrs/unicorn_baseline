@@ -12,9 +12,9 @@ class TileDataset(torch.utils.data.Dataset):
         self.backend = backend
         self.name = wsi_path.stem.replace(" ", "_")
         self.spacing = spacing
+        self.scale_coordinates_flag = scale_coordinates
         self.load_coordinates(coordinates_dir)
         self.transforms = transforms
-        self.scale_coordinates_flag = scale_coordinates
 
     def set_coordinates(self, coordinates):
         self.coordinates = (np.array([coordinates["x"], coordinates["y"]]).T).astype(
