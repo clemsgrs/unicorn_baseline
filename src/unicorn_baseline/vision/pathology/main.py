@@ -413,6 +413,13 @@ def run_pathology_vision_task(
         "filter_params": FilterParams(ref_tile_size=64, a_t=1, a_h=1, max_n_holes=8),
     }
 
+    # change resolution for Task 8 which looks at mitoses
+    if task_name == 'Task08_detecting_mitotic_figures_in_breast_cancer_wsis':
+        detection_config = {
+            "tiling_params": TilingParams(spacing=0.25, tolerance=tolerance, tile_size=tile_size, overlap=0, drop_holes=False, min_tissue_ratio=0.1, use_padding=True),
+            "filter_params": FilterParams(ref_tile_size=64, a_t=1, a_h=1, max_n_holes=8),
+        }
+
     segmentation_config = {
         "tiling_params": TilingParams(
             spacing=spacing,
