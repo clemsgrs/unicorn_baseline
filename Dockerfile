@@ -58,10 +58,6 @@ ENV PYTHONPATH="/home/user/prov-gigapath:$PYTHONPATH"
 USER user
 WORKDIR /opt/app/
 
-# You can add any Python dependencies to requirements.in/requirements.txt
-RUN python -m pip install --upgrade pip setuptools pip-tools \
-    && rm -rf /home/user/.cache/pip
-
 COPY --chown=user:user requirements.in /opt/app/
 RUN python -m pip install \
     --user \
@@ -70,8 +66,7 @@ RUN python -m pip install \
     --requirement /opt/app/requirements.in \
     && rm -rf /home/user/.cache/pip
 
-# install flash-attn separately
-RUN python -m pip install --extra-index-url https://download.pytorch.org/whl/cu118 flash-attn
+RUN python -m pip install flash-attn==2.5.8
 
 # Cache tiktoken
 ENV TIKTOKEN_CACHE_DIR=/opt/tiktoken_cache
